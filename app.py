@@ -1,9 +1,31 @@
+from helpers import folder
+from getpass import getpass
 from instagrapi import Client
+from instagrapi.exceptions import LoginRequired
 
-cl = Client()
-# cl.login('ruslan_popelyshyn', 'password', verification_code='')
 
-media_pk = cl.media_pk_from_url("https://www.instagram.com/reels/Cqnwc6-J11V")
-media_path = cl.video_download(media_pk)
+def login():
+    username: str = input("Username: ")
+    password: str = getpass("Password: ")
+    pass2fa: str = input("2FA: ")
 
-print(media_path)
+    instagram.login(username, password, verification_code=pass2fa)
+
+
+def download_media(url: str):
+    media_pk: int = instagram.media_pk_from_url(url)
+    return instagram.video_download(media_pk, folder=folder("videos"))
+
+
+instagram = Client()
+
+while True:
+    url: str = input("URL: ")
+
+    try:
+        download_media(url)
+    except LoginRequired:
+        login()
+        download_media(url)
+    finally:
+        print("Done!")
